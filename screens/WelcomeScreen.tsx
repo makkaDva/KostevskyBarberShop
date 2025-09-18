@@ -47,21 +47,24 @@ export default function WelcomeScreen({ navigation }: { navigation: any }) {
 
         {/* Buttons */}
         <View style={styles.buttonsContainer}>
-          <TouchableOpacity
-            style={styles.primaryButton}
-            onPress={() => navigation.navigate('Login')}
-            activeOpacity={0.9}
-          >
-            <LinearGradient
-              colors={['#FFFFFF', '#E0E0E0']}
-              style={styles.gradientButton}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
+          {/* Shadow wrapper for Login button */}
+          <View style={styles.shadowWrapper}>
+            <TouchableOpacity
+              style={styles.primaryButton}
+              onPress={() => navigation.navigate('Login')}
+              activeOpacity={0.9}
             >
-              <Icon name="login" size={22} color="#000000" />
-              <Text style={styles.primaryButtonText}>Prijava</Text>
-            </LinearGradient>
-          </TouchableOpacity>
+              <LinearGradient
+                colors={['#FFFFFF', '#E0E0E0']}
+                style={styles.gradientButton}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+              >
+                <Icon name="login" size={22} color="#000000" />
+                <Text style={styles.primaryButtonText}>Prijava</Text>
+              </LinearGradient>
+            </TouchableOpacity>
+          </View>
 
           <TouchableOpacity
             style={styles.secondaryButton}
@@ -134,15 +137,19 @@ const styles = StyleSheet.create({
     maxWidth: 420,
     marginBottom: 50,
   },
-  primaryButton: {
+  // Shadow applied here, not inside button
+  shadowWrapper: {
     marginBottom: 18,
-    borderRadius: 28,
-    overflow: 'hidden',
     shadowColor: '#FFFFFF',
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.25,
     shadowRadius: 10,
     elevation: 10,
+    borderRadius: 28,
+  },
+  primaryButton: {
+    borderRadius: 28,
+    overflow: 'hidden',
   },
   gradientButton: {
     flexDirection: 'row',

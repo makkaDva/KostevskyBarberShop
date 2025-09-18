@@ -181,7 +181,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "#!/bin/sh\nset -e\nexport REACT_NATIVE_PATH=node_modules/react-native\n\necho \"Using REACT_NATIVE_PATH: $REACT_NATIVE_PATH\"\necho \"Node binary: $(which node)\"\nls -l $REACT_NATIVE_PATH/scripts/xcode/\n\n$REACT_NATIVE_PATH/scripts/xcode/with-environment.sh $REACT_NATIVE_PATH/scripts/react-native-xcode.sh\n";
+			shellScript = "export NODE_BINARY=/Users/marko/.nvm/versions/node/v20.19.5/bin/node\n\n../node_modules/react-native/scripts/react-native-xcode.sh\n";
 		};
 		00EEFC60759A1932668264C0 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -260,6 +260,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 78K2YVP825;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = KostevskyBarberShop/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Kostewsky Jr. Barbershop";
@@ -275,7 +276,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.m2code.--PRODUCT-NAME-rfc1034identifier-";
 				PRODUCT_NAME = KostevskyBarberShop;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -290,6 +291,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 78K2YVP825;
 				INFOPLIST_FILE = KostevskyBarberShop/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Kostewsky Jr. Barbershop";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
@@ -304,7 +306,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.m2code.--PRODUCT-NAME-rfc1034identifier-";
 				PRODUCT_NAME = KostevskyBarberShop;
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
