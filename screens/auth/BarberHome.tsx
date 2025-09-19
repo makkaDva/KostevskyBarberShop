@@ -47,9 +47,9 @@ const BarberHomeScreen = ({ navigation }: { navigation: any }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1F1F1F',
+    backgroundColor: '#000', // deep black background
     padding: 25,
-    paddingTop:50,
+    paddingTop: 50,
   },
   header: {
     marginBottom: 40,
@@ -57,13 +57,14 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 26,
     fontWeight: '800',
-    color: '#FFC72C',
+    color: '#fff', // white headline
     textAlign: 'center',
     marginBottom: 10,
+    letterSpacing: 1,
   },
   divider: {
-    height: 2,
-    backgroundColor: 'rgba(255, 199, 44, 0.3)',
+    height: 1,
+    backgroundColor: 'rgba(255,255,255,0.15)', // subtle white line
     width: '80%',
     alignSelf: 'center',
   },
@@ -75,47 +76,52 @@ const styles = StyleSheet.create({
   mainButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(40, 40, 40, 0.9)',
+    backgroundColor: '#111', // matte dark gray
     paddingVertical: 18,
     paddingHorizontal: 20,
-    borderRadius: 12,
+    borderRadius: 14,
     marginBottom: 20,
     borderWidth: 1,
-    borderColor: 'rgba(255, 199, 44, 0.3)',
+    borderColor: 'rgba(255,255,255,0.08)', // faint border
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    elevation: 5,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.25,
+    shadowRadius: 5,
+    elevation: 4,
   },
   buttonIcon: {
     marginRight: 15,
+    color: '#fff',
   },
   buttonText: {
     flex: 1,
-    color: '#FFC72C',
+    color: '#fff',
     fontSize: 18,
     fontWeight: '600',
+    letterSpacing: 0.5,
   },
   logoutButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     padding: 15,
-    borderRadius: 10,
-    backgroundColor: 'rgba(40, 40, 40, 0.9)',
+    borderRadius: 12,
+    backgroundColor: '#111',
     borderWidth: 1,
-    borderColor: 'rgba(255, 85, 85, 0.3)',
+    borderColor: 'rgba(255, 85, 85, 0.4)', // subtle red accent
     marginBottom: 20,
   },
   logoutIcon: {
     marginRight: 10,
+    color: '#FF5555',
   },
   logoutText: {
     color: '#FF5555',
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '700',
+    letterSpacing: 0.5,
   },
 });
+
 
 export default BarberHomeScreen;

@@ -1,9 +1,7 @@
-
 import React, { useState, useEffect } from 'react';
 import { 
   View, Text, TouchableOpacity, StyleSheet, 
-  ScrollView, ActivityIndicator, Alert, 
-  Platform
+  ScrollView, ActivityIndicator, Alert, Modal
 } from 'react-native';
 import { 
   addMonths, format, getDaysInMonth, getDay, 
@@ -37,6 +35,10 @@ const BarberScheduleScreen = ({ navigation }: { navigation: any }) => {
   const [loading, setLoading] = useState(false);
   const [daysOff, setDaysOff] = useState<Date[]>([]);
   const { session } = useAuth();
+
+  // modal states
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedAppointmentId, setSelectedAppointmentId] = useState<string | null>(null);
 
   useEffect(() => {
     if (selectedDate) {
@@ -108,7 +110,7 @@ const BarberScheduleScreen = ({ navigation }: { navigation: any }) => {
     }
   };
 
-  const handleCancelAppointment = async (appointmentId: string) => {
+  const deleteAppointment = async (appointmentId: string) => {
     try {
       const { error } = await supabase
         .from('appointments')
@@ -116,15 +118,32 @@ const BarberScheduleScreen = ({ navigation }: { navigation: any }) => {
         .eq('uid', appointmentId);
       
       if (error) throw error;
-      
-      Alert.alert('Uspešno', 'Termin otkazan');
-      if (selectedDate) {
-        fetchAppointments(selectedDate);
-      }
+
+      // update UI instantly
+      setAppointments(prev => prev.filter(app => app.id !== appointmentId));
+      setModalVisible(false);
+      setSelectedAppointmentId(null);
     } catch (error) {
       console.error('Greška pri otkazivanju:', error);
       Alert.alert('Greška', 'Neuspelo otkazivanje termina');
     }
+  };
+
+  const handleDeleteConfirmation = (appointmentId: string) => {
+    console.log("Opening modal for appointment:", appointmentId);
+    setSelectedAppointmentId(appointmentId);
+    setModalVisible(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (selectedAppointmentId) {
+      deleteAppointment(selectedAppointmentId);
+    }
+  };
+
+  const handleCancelDelete = () => {
+    setModalVisible(false);
+    setSelectedAppointmentId(null);
   };
 
   const handleLoyaltyAction = async (userId: string, isLoyaltyMember: boolean) => {
@@ -282,7 +301,7 @@ const BarberScheduleScreen = ({ navigation }: { navigation: any }) => {
 
               <TouchableOpacity
                 style={styles.cancelButton}
-                onPress={() => handleCancelAppointment(appt.id)}
+                onPress={() => handleDeleteConfirmation(appt.id)}
               >
                 <Text style={styles.buttonText}>Otkaži termin</Text>
               </TouchableOpacity>
@@ -294,64 +313,94 @@ const BarberScheduleScreen = ({ navigation }: { navigation: any }) => {
   };
 
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.headerContainer}>
-        <Text style={styles.title}>Moj Raspored</Text>
-        <TouchableOpacity 
-          onPress={() => navigation.goBack()} 
-          style={styles.backButton}
-        >
-          <Icon name="arrow-left" size={24} color="#FFC72C" />
-          <Text style={styles.backButtonText}>Nazad</Text>
-        </TouchableOpacity>
-      </View>
-
-      <View style={styles.calendarContainer}>
-        <View style={styles.monthHeader}>
-          <TouchableOpacity onPress={() => setCurrentMonth(addMonths(currentMonth, -1))}>
-            <Icon name="chevron-left" size={28} color="#FFC72C" />
-          </TouchableOpacity>
-          
-          <Text style={styles.monthText}>
-            {format(currentMonth, 'MMMM yyyy')}
-          </Text>
-          
-          <TouchableOpacity onPress={() => setCurrentMonth(addMonths(currentMonth, 1))}>
-            <Icon name="chevron-right" size={28} color="#FFC72C" />
+    <>
+      <ScrollView style={styles.container}>
+        <View style={styles.headerContainer}>
+          <Text style={styles.title}>Moj Raspored</Text>
+          <TouchableOpacity 
+            onPress={() => navigation.goBack()} 
+            style={styles.backButton}
+          >
+            <Icon name="arrow-left" size={24} color="#FFC72C" />
+            <Text style={styles.backButtonText}>Nazad</Text>
           </TouchableOpacity>
         </View>
-        
-        <View style={styles.weekDaysRow}>
-          {['Pon', 'Uto', 'Sre', 'Čet', 'Pet', 'Sub', 'Ned'].map((day) => (
-            <Text 
-              key={day} 
-              style={[
-                styles.weekDay,
-                day === 'Ned' && styles.sundayText
-              ]}
-            >
-              {day}
+
+        <View style={styles.calendarContainer}>
+          <View style={styles.monthHeader}>
+            <TouchableOpacity onPress={() => setCurrentMonth(addMonths(currentMonth, -1))}>
+              <Icon name="chevron-left" size={28} color="#FFC72C" />
+            </TouchableOpacity>
+            
+            <Text style={styles.monthText}>
+              {format(currentMonth, 'MMMM yyyy')}
             </Text>
-          ))}
+            
+            <TouchableOpacity onPress={() => setCurrentMonth(addMonths(currentMonth, 1))}>
+              <Icon name="chevron-right" size={28} color="#FFC72C" />
+            </TouchableOpacity>
+          </View>
+          
+          <View style={styles.weekDaysRow}>
+            {['Pon', 'Uto', 'Sre', 'Čet', 'Pet', 'Sub', 'Ned'].map((day) => (
+              <Text 
+                key={day} 
+                style={[
+                  styles.weekDay,
+                  day === 'Ned' && styles.sundayText
+                ]}
+              >
+                {day}
+              </Text>
+            ))}
+          </View>
+          
+          {renderDays()}
         </View>
-        
-        {renderDays()}
-      </View>
 
-      <View style={styles.appointmentsSection}>
-        <Text style={styles.sectionTitle}>
-          Termini za datum: {selectedDate ? format(selectedDate, 'dd.MM.yyyy') : 'izabrani datum'}
-        </Text>
-        {renderAppointments()}
-      </View>
-    </ScrollView>
+        <View style={styles.appointmentsSection}>
+          <Text style={styles.sectionTitle}>
+            Termini za datum: {selectedDate ? format(selectedDate, 'dd.MM.yyyy') : 'izabrani datum'}
+          </Text>
+          {renderAppointments()}
+        </View>
+      </ScrollView>
+
+      {/* Delete Confirmation Modal */}
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={handleCancelDelete}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Da li ste sigurni da želite da otkažete termin?</Text>
+            <View style={styles.modalButtons}>
+              <TouchableOpacity
+                style={[styles.modalButton, styles.confirmButton]}
+                onPress={handleConfirmDelete}
+              >
+                <Text style={styles.modalButtonText}>Potvrdi</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.modalButton, styles.cancelDeleteButton]}
+                onPress={handleCancelDelete}
+              >
+                <Text style={styles.modalButtonText}>Odustani</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+    </>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1F1F1F',
+    backgroundColor: '#000', // pure black base
     padding: 15,
   },
   headerContainer: {
@@ -360,10 +409,11 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
-    color: '#FFC72C',
+    fontWeight: '800',
+    color: '#fff',
     textAlign: 'center',
     marginTop: 10,
+    letterSpacing: 1,
   },
   backButton: {
     flexDirection: 'row',
@@ -374,16 +424,18 @@ const styles = StyleSheet.create({
     marginLeft: 15,
   },
   backButtonText: {
-    color: '#FFC72C',
+    color: '#fff',
     marginLeft: 5,
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: '600',
   },
   calendarContainer: {
-    backgroundColor: 'rgba(40, 40, 40, 0.7)',
+    backgroundColor: '#111', // matte grayish black
     borderRadius: 12,
     padding: 15,
     marginBottom: 20,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.08)',
   },
   monthHeader: {
     flexDirection: 'row',
@@ -392,9 +444,9 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   monthText: {
-    color: '#FFC72C',
+    color: '#fff',
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: '700',
     textTransform: 'capitalize',
   },
   weekDaysRow: {
@@ -403,13 +455,14 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   weekDay: {
-    color: '#FFF',
+    color: '#fff',
     width: 40,
     textAlign: 'center',
     fontSize: 14,
+    fontWeight: '500',
   },
   sundayText: {
-    color: '#666',
+    color: '#555',
   },
   weekRow: {
     flexDirection: 'row',
@@ -424,28 +477,28 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   selectedDay: {
-    backgroundColor: 'rgba(255, 199, 44, 0.3)',
+    backgroundColor: 'rgba(255,255,255,0.15)',
   },
   todayButton: {
     borderWidth: 1,
-    borderColor: '#FFC72C',
+    borderColor: '#fff',
   },
   dayDisabled: {
-    opacity: 0.4,
+    opacity: 0.25,
   },
   dayText: {
-    color: '#FFF',
+    color: '#fff',
     fontSize: 16,
   },
   selectedText: {
-    fontWeight: 'bold',
-    color: '#FFC72C',
+    fontWeight: '700',
+    color: '#fff',
   },
   todayText: {
-    color: '#FFC72C',
+    color: '#fff',
   },
   dayTextDisabled: {
-    color: '#666',
+    color: '#555',
   },
   dayEmpty: {
     width: 40,
@@ -455,9 +508,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   sectionTitle: {
-    color: '#FFC72C',
+    color: '#fff',
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: '700',
     marginBottom: 15,
     textAlign: 'center',
   },
@@ -468,7 +521,7 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   noSelectionText: {
-    color: '#FFC72C',
+    color: '#888',
     fontSize: 16,
     marginTop: 15,
     textAlign: 'center',
@@ -485,7 +538,7 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   noAppointmentsText: {
-    color: '#FFC72C',
+    color: '#888',
     fontSize: 16,
     marginTop: 15,
     textAlign: 'center',
@@ -494,10 +547,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   appointmentCard: {
-    backgroundColor: 'rgba(40, 40, 40, 0.7)',
+    backgroundColor: '#111',
     borderRadius: 10,
     padding: 15,
     marginBottom: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.05)',
   },
   appointmentHeader: {
     flexDirection: 'row',
@@ -506,9 +561,9 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   appointmentTime: {
-    color: '#FFC72C',
+    color: '#fff',
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: '700',
   },
   infoRow: {
     flexDirection: 'row',
@@ -516,12 +571,12 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   infoLabel: {
-    color: '#FFC72C',
+    color: '#888',
     fontSize: 14,
     fontWeight: '600',
   },
   infoValue: {
-    color: '#FFF',
+    color: '#fff',
     fontSize: 14,
   },
   buttonsContainer: {
@@ -532,30 +587,84 @@ const styles = StyleSheet.create({
   loyaltyButton: {
     paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: 5,
+    borderRadius: 6,
     marginRight: 10,
     minWidth: 80,
     alignItems: 'center',
   },
   loyaltyButtonAdd: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: '#222', // subtle black box
+    borderWidth: 1,
+    borderColor: '#4CAF50',
   },
   loyaltyButtonRemove: {
-    backgroundColor: '#FF9800',
+    backgroundColor: '#222',
+    borderWidth: 1,
+    borderColor: '#FF9800',
   },
   cancelButton: {
     paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: 5,
-    backgroundColor: '#F44336',
+    borderRadius: 6,
+    backgroundColor: '#222',
+    borderWidth: 1,
+    borderColor: '#F44336',
     minWidth: 100,
     alignItems: 'center',
   },
   buttonText: {
-    color: '#FFF',
+    color: '#fff',
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: '600',
+  },
+  modalOverlay: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.75)',
+  },
+  modalContent: {
+    width: '85%',
+    backgroundColor: '#000',
+    borderRadius: 15,
+    padding: 25,
+    borderWidth: 2,
+    borderColor: '#FFF',
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: '900',
+    color: '#FFF',
+    marginBottom: 25,
+    textAlign: 'center',
+  },
+  modalButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  modalButton: {
+    flex: 1,
+    paddingVertical: 12,
+    borderRadius: 8,
+    marginHorizontal: 5,
+    alignItems: 'center',
+  },
+  confirmButton: {
+    backgroundColor: '#222',
+    borderWidth: 1,
+    borderColor: '#F44336',
+  },
+  cancelDeleteButton: {
+    backgroundColor: '#222',
+    borderWidth: 1,
+    borderColor: '#FFF',
+  },
+  modalButtonText: {
+    fontSize: 14,
+    color: '#FFF',
+    fontWeight: 'bold',
   },
 });
+
 
 export default BarberScheduleScreen;

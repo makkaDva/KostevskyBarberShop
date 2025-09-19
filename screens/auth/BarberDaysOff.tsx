@@ -305,10 +305,9 @@ const BarberDaysOff = ({ navigation }: { navigation: any }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1F1F1F',
+    backgroundColor: '#000', // pure black
     padding: 16,
     paddingTop: 50,
-   // marginTop:30,
   },
   header: {
     flexDirection: 'row',
@@ -324,28 +323,31 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   backButtonText: {
-    color: '#FFC72C',
+    color: '#fff',
     fontSize: 16,
-    fontWeight:'bold',
+    fontWeight: '600',
   },
   rightSpacer: {
     width: 80,
   },
   title: {
     fontSize: 22,
-    fontWeight: 'bold',
-    color: '#FFC72C',
+    fontWeight: '800',
+    color: '#fff',
     textAlign: 'center',
     position: 'absolute',
     left: 0,
     right: 0,
     zIndex: 0,
+    letterSpacing: 1,
   },
   calendarContainer: {
-    backgroundColor: 'rgba(40, 40, 40, 0.7)',
+    backgroundColor: '#111',
     borderRadius: 12,
     padding: 16,
     marginBottom: 20,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.08)',
   },
   monthHeader: {
     flexDirection: 'row',
@@ -357,9 +359,10 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   monthText: {
-    color: '#FFC72C',
+    color: '#fff',
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: '700',
+    textTransform: 'capitalize',
   },
   weekDaysRow: {
     flexDirection: 'row',
@@ -367,13 +370,14 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   weekDay: {
-    color: '#FFF',
+    color: '#fff',
     width: 40,
     textAlign: 'center',
     fontSize: 14,
+    fontWeight: '500',
   },
   sundayText: {
-    color: '#FF5555',
+    color: '#555',
   },
   weekRow: {
     flexDirection: 'row',
@@ -386,37 +390,37 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 20,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    backgroundColor: '#111',
   },
   selectedDay: {
-    backgroundColor: 'rgba(255, 199, 44, 0.3)',
+    backgroundColor: 'rgba(255,255,255,0.15)',
     borderWidth: 1,
-    borderColor: '#FFC72C',
+    borderColor: '#fff',
   },
   existingDay: {
-    backgroundColor: 'rgba(76, 175, 80, 0.2)',
+    backgroundColor: 'rgba(76, 175, 80, 0.15)',
     borderWidth: 1,
     borderColor: '#4CAF50',
   },
   sundayDay: {
-    backgroundColor: 'rgba(255, 85, 85, 0.2)',
+    backgroundColor: 'rgba(255, 85, 85, 0.15)',
   },
   dayDisabled: {
-    opacity: 0.3,
+    opacity: 0.25,
   },
   dayText: {
-    color: '#FFF',
+    color: '#fff',
     fontSize: 16,
   },
   selectedDayText: {
-    color: '#FFC72C',
-    fontWeight: 'bold',
+    color: '#fff',
+    fontWeight: '700',
   },
   sundayDayText: {
     color: '#FF5555',
   },
   dayTextDisabled: {
-    color: '#666',
+    color: '#555',
   },
   dayEmpty: {
     width: 40,
@@ -435,10 +439,11 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   sectionTitle: {
-    color: '#FFC72C',
+    color: '#fff',
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: '700',
     marginBottom: 12,
+    textAlign: 'center',
   },
   noDatesSelected: {
     flex: 1,
@@ -447,7 +452,7 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   noDatesText: {
-    color: '#FFC72C',
+    color: '#888',
     fontSize: 16,
     marginTop: 10,
     textAlign: 'center',
@@ -461,13 +466,15 @@ const styles = StyleSheet.create({
   selectedDateItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(40, 40, 40, 0.7)',
+    backgroundColor: '#111',
     borderRadius: 8,
     padding: 12,
     marginBottom: 8,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.05)',
   },
   selectedDateText: {
-    color: '#FFF',
+    color: '#fff',
     fontSize: 16,
     marginLeft: 10,
     flex: 1,
@@ -477,7 +484,7 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
   saveButton: {
-    backgroundColor: '#FFC72C',
+    backgroundColor: '#fff',
     padding: 16,
     borderRadius: 10,
     marginBottom: Platform.OS === 'ios' ? 30 : 20,
@@ -492,11 +499,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   saveButtonText: {
-    color: '#1F1F1F',
+    color: '#000',
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: '700',
     marginLeft: 10,
   },
 });
+
 
 export default BarberDaysOff;
